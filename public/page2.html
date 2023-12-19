@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View all documents</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/10.7.1/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/10.7.1/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/10.7.1/firebase-performance-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+   <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    </style>
+  </head>
+  <body>
+
+
+     <header></header>
+  <main class="info-page">
+
+    <div class="info">
+      <div class="info__body">
+        <div class="info__left">
+          <div class="menu-block box">
+            <div class="menu-block__head">
+              <h1 class="menu-block__title">Входящие по номеру регистрации</h1>
+            </div>
+
+            <div class="menu-block__search">
+              <input type="text" class="form-control" id="search" name="search" placeholder="Поиск" />
+            </div>
+
+
+            <div class="menu-block__radio">
+              <div class="radio-item">
+                <input type="radio" id="all" name="filter" value="all" checked />
+                  <label for="all">Все <span id="all_count"></span></label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="notcontrol" name="filter" value="notcontrol"  />
+                  <label for="notcontrol">Неконтрольные</label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="checkcontrol" name="filter" value="checkcontrol"  />
+                  <label for="checkcontrol">Снятые с контроля</label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="oncontrol" name="filter" value="oncontrol"  />
+                  <label for="oncontrol">На контроле</label>
+              </div>
+            </div>
+
+
+            <div class="menu-block__list" id="menu-block__list">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="info__right">
+          <div class="info-block" id="info-block">
+          
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+  </main>
+
+
+
+  <!-- HTML для модального окна -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" >&times;</span>
+
+
+
+
+
+
+
+           
+
+    <form id="editForm">
+
+        <button class="cancel-button btn" style="float:right;" id="saveButton"><i class="fa fa-save"></i>Сохранить</button>
+
+       <div class="check-item">
+              <input type="checkbox" id="check_important" name="" />
+              <label for="">Очень срочное письмо</label>
+            </div>
+
+            <div class="check-item">
+              <input type="checkbox" id="check_control" name="" />
+              <label for="">Снято с контроля</label>
+            </div>
+             <div class="check-item">
+                <input type="checkbox" id="check_notcontrol" name="" />
+                <label for="">Неконтрольный документ</label>
+              </div>
+
+              <div class="check-item">
+                <input type="checkbox" id="check_paper" name="" />
+                <label for="">Передан в бумажном виде</label>
+              </div>
+
+              <div class="check-item">
+                <input type="checkbox" id="check_foruse" name="" />
+                <label for="foruse">Для служебного пользования</label>
+              </div>
+
+              <div class="check-item">
+                <input type="checkbox" id="check_dir" name="" />
+                <label for="">ДирОРД</label>
+              </div>
+              <div class="check-item">
+                <input type="checkbox" id="check_corres" name="" />
+                <label for="">Внутренняя корреспонденция</label>
+              </div>
+              <div class="check-item">
+                <input type="checkbox" id="check_answer" name="" />
+                <label for="">Ответ на исходящий</label>
+              </div>
+
+
+
+
+              <div class="field-item">
+              <label for="">Тема документа:<span class="star">*</span></label>
+              <div class="input-group mb-3">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                </div>
+                  <input type="text" class="form-control" id="fieldTheme" name=""  >
+              </div>
+            </div>
+
+
+
+            <div class="field-item">
+                  <label for="">Входящий №:</label>
+                  <div class="input-group mb-3">
+
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                  </div>
+                    <input type="text" class="form-control" id="field_incomingNumber" name=""  >
+                  </div>
+                </div>
+
+                 <div class="field-item">
+                  <label for="">Дата входящего:</label>
+                  <div class="input-group mb-3">
+
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                  </div>
+                    <input type="date" class="form-control" id="field_incomingDate" name=""  >
+                  </div>
+                </div>
+
+
+                        <div class="field-item">
+                  <label for="">Исходящий №:</label>
+                  <div class="input-group mb-3">
+
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                  </div>
+                    <input type="text" class="form-control" id="field_outcomingNumber" name=""  >
+                  </div>
+                </div>
+
+                                <div class="field-item">
+                  <label for="">Дата исходящего:</label>
+                  <div class="input-group mb-3">
+
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                  </div>
+                    <input type="date" class="form-control" id="field_outcomingDate" name=""  >
+                  </div>
+                </div>
+
+
+            <div class="field-item">
+              <label for="">Вид доставки:</label>
+              <div class="input-group mb-3">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                </div>
+                  <input type="text" class="form-control" id="field_deliveryType" name=""  >
+              </div>
+            </div>
+
+                           <div class="field-item">
+              <label for="">Корреспондент:<span class="star">*</span></label>
+              <div class="input-group mb-3">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-caret-down"></i></span>
+                </div>
+
+                 <select id="field_correspondentDropdown" class="form-control">
+    <option value="value1">Значение 1</option>
+    <option value="value2">Значение 2</option>
+    <!-- Добавьте другие варианты выбора здесь -->
+  </select>
+              </div>
+            </div>
+
+
+             <div class="field-item">
+              <label for="">Исполнитель:<span class="star">*</span></label>
+              <div class="input-group mb-3">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                </div>
+                  <input type="text" class="form-control" id="field_executor" name=""  >
+              </div>
+            </div>
+
+             <div class="field-item">
+              <label for="">Подразделение:<span class="star">*</span></label>
+              <div class="input-group mb-3">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-pencil-square-o"></i></span>
+                </div>
+                  <input type="text" class="form-control" id="field_subdivision" name=""  >
+              </div>
+            </div>
+  
+
+      
+
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+  <script>
+
+
+
+
+       document.addEventListener('DOMContentLoaded', function() {
+        const loadEl = document.querySelector('#load');
+
+
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.firestore().doc('/foo/bar').get().then(() => { });
+        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        // firebase.analytics(); // call to activate
+        // firebase.analytics().logEvent('tutorial_completed');
+        // firebase.performance(); // call to activate
+        
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+  const dataRef = firebase.database().ref('/realsoft/incomingDocuments');
+   const container = document.getElementById('menu-block__list');
+    let currentFilter = 'all';
+    let numNotControl = 0;
+    const all = 0;
+
+// Функция для отображения данных с учетом текущего фильтра и поискового запроса
+function displayData(filter, searchTerm) {
+  container.innerHTML = ''; // Очистим контейнер перед добавлением новых данных
+
+  dataRef.once('value', snapshot => {
+    snapshot.forEach(childSnapshot => {
+      const info = childSnapshot.val();
+
+      // Проверяем условия фильтрации в соответствии с выбором пользователя и поиском
+      if (
+        (filter === 'notcontrol' && info.notcontrol === true) ||
+        (filter === 'oncontrol' && info.control === false) ||
+        (filter === 'checkcontrol' && info.control === true) ||
+        filter === 'all'
+      ) {
+        // Проверяем, содержит ли значение incomingNumber поисковый запрос, если он задан
+        const matchesSearch = !searchTerm || info.incomingNumber.includes(searchTerm);
+
+        if (matchesSearch) {
+          let imageName = info.control === false ? 'red.png' : 'green.png';
+
+          const objectInfo = `
+            <div class="list-item" data-key="${childSnapshot.key}">
+              <div class="list-item__icon">
+                <img src="img/${imageName}">
+              </div>
+              <div class="list-item__text">
+                <p>Рег. номер: ${info.incomingNumber}</p>
+                <p>${info.incomingDate}</p>
+                <p>${info.documentTopic}</p>
+                <p>${info.correspondentDropdown}</p>
+              </div> 
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', objectInfo);
+
+
+
+        }
+      }
+
+
+
+          // Получаем все элементы с классом '.list-item'
+const listItems = document.querySelectorAll('.list-item');
+
+// Добавляем обработчик клика на каждый элемент '.list-item'
+listItems.forEach(item => {
+  item.addEventListener('click', event => {
+    // Удаляем класс 'selected' у всех элементов
+    listItems.forEach(el => el.classList.remove('selected'));
+    // Добавляем класс 'selected' только на текущий элемент
+    item.classList.add('selected');
+  });
+});
+
+
+
+
+
+          document.querySelectorAll('.list-item').forEach(item => {
+  item.addEventListener('click', event => {
+    const selectedItemKey = item.getAttribute('data-key'); // Получаем ключ выбранного объекта из data-атрибута
+
+    const selectedItemRef = firebase.database().ref(`/realsoft/incomingDocuments/${selectedItemKey}`);
+
+    selectedItemRef.once('value')
+      .then(snapshot => {
+        const selectedItemInfo = snapshot.val();
+        const objectInfoContainer = document.getElementById('info-block');
+
+
+
+
+
+       const htmlContent =`
+      <div class="info__header box">
+              <div class="buttons">
+                <button class="cancel-button btn"><i class="fa fa-check"></i>Ознакомиться</button>
+                <button class="cancel-button btn"><i class="fa fa-user"></i>Отправить получателю</button>
+                
+              </div>
+              <div class="buttons">
+                <button class="cancel-button btn"><i class="fa fa-arrow-circle-o-up"></i>Исходящий</button>
+                <button class="cancel-button btn"><i class="fa fa-commenting-o"></i>Комментарий</button>
+                <button class="cancel-button btn" id="editButton"><i class="fa fa-edit"></i>Редактировать</button>
+                <button class="cancel-button btn" id="deleteButton"><i class="fa fa-trash-o"></i></button>
+              </div>
+
+              
+            </div>
+
+
+            <div class="info__main box">
+
+              <h1 class="text-title">Входящий документ № ${selectedItemInfo.incomingNumber}</h1>
+              <h2 class="text-title-theme">${selectedItemInfo.documentTopic}</h2>
+              <div class="check-boxes hr">
+                <div class="check-item">
+                  <input type="checkbox" id="important_db" name="important"  ${selectedItemInfo.important ? 'checked' : ''} readonly />
+                  <label for="important_db">Очень срочное письмо</label>
+                </div>
+
+                <div class="check-item">
+                  <input type="checkbox" id="control_db" name="control"  ${selectedItemInfo.control ? 'checked' : ''} readonly />
+                  <label for="control_db">Снято с контроля</label>
+                </div>
+              </div>
+
+
+              <div class="checks">
+
+
+                <div class="check-boxes right"> 
+                  <label>Срок исполнения:</label>
+                  <p class="text-date">${selectedItemInfo.outcomingDate}</p>
+        
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="description-section">
+                <div class="description-block">
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Исходящий №:</h2>
+                    <p class="description-text">${selectedItemInfo.outcomingNumber}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Дата исходящего:</h2>
+                    <p class="description-text">${selectedItemInfo.outcomingDate}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Корреспондент:</h2>
+                    <p class="description-text">${selectedItemInfo.correspondentDropdown}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Исполнитель:</h2>
+                    <p class="description-text">${selectedItemInfo.executor}</p>
+                  </div>
+                  <hr>
+                  
+                </div>
+                <div class="description-block">
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Вид доставки:</h2>
+                    <p class="description-text">${selectedItemInfo.deliveryType}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Регистрационный №:</h2>
+                    <p class="description-text">${selectedItemInfo.incomingNumber}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Дата регистрации:</h2>
+                    <p class="description-text">${selectedItemInfo.incomingDate}</p>
+                  </div>
+                  <hr>
+
+                  <div class="description-block__item">
+                    <h2 class="description-title">Подразделение:</h2>
+                    <p class="description-text">${selectedItemInfo.subdivision}</p>
+                  </div>
+                  <hr>
+                  
+                </div>
+              </div>
+              
+            </div>`;
+
+            objectInfoContainer.innerHTML = htmlContent;
+
+
+            // Открываем модальное окно при клике на кнопку "Редактировать"
+const editButton = document.getElementById('editButton');
+const modal = document.getElementById('myModal');
+
+
+editButton.addEventListener('click', () => {
+  // Отображаем модальное окно
+  modal.style.display = 'block';
+
+  const keyToUpdate = item.getAttribute('data-key'); // Ключ объекта, который вы хотите обновить
+  const selectedItemRef = firebase.database().ref(`/realsoft/incomingDocuments/${keyToUpdate}`);
+
+  selectedItemRef.once('value')
+    .then(snapshot => {
+      const selectedItemData = snapshot.val();
+      // Заполняем поля формы данными из базы данных для редактирования
+
+
+      document.getElementById('check_important').checked = selectedItemData.important === true;
+      document.getElementById('check_control').checked = selectedItemData.control === true;
+      document.getElementById('check_notcontrol').checked = selectedItemData.notcontrol === true;
+      document.getElementById('check_paper').checked = selectedItemData.paper === true;
+      document.getElementById('check_foruse').checked = selectedItemData.foruse === true;
+      document.getElementById('check_dir').checked = selectedItemData.dir === true;
+      document.getElementById('check_corres').checked = selectedItemData.corres === true;
+      document.getElementById('check_answer').checked = selectedItemData.answer === true;
+
+      document.getElementById('fieldTheme').value = selectedItemData.documentTopic;
+      document.getElementById('field_incomingNumber').value = selectedItemData.incomingNumber;
+      document.getElementById('field_outcomingNumber').value = selectedItemData.outcomingNumber;
+      document.getElementById('field_deliveryType').value = selectedItemData.deliveryType;
+      document.getElementById('field_executor').value = selectedItemData.executor;
+      document.getElementById('field_subdivision').value = selectedItemData.subdivision;
+      document.getElementById('field_outcomingDate').value = selectedItemData.outcomingDate;
+      document.getElementById('field_correspondentDropdown').value = selectedItemData.correspondentDropdown;
+      document.getElementById('field_incomingDate').value = selectedItemData.incomingDate;
+     
+    })
+    .catch(error => {
+      console.error('Ошибка получения данных для редактирования:', error);
+    });
+
+const saveButton = document.getElementById('saveButton');
+  // Обработчик события для кнопки "Сохранить"
+  saveButton.addEventListener('click', () => {
+    const updatedData = {
+      important: document.getElementById('check_important').checked,
+      control: document.getElementById('check_control').checked,
+      notcontrol: document.getElementById('check_notcontrol').checked,
+      paper: document.getElementById('check_paper').checked,
+      foruse: document.getElementById('check_foruse').checked,
+      dir: document.getElementById('check_dir').checked,
+      corres: document.getElementById('check_corres').checked,
+      answer: document.getElementById('check_answer').checked,
+      documentTopic: document.getElementById('fieldTheme').value,
+      incomingNumber: document.getElementById('field_incomingNumber').value,
+      outcomingNumber: document.getElementById('field_outcomingNumber').value,
+      deliveryType: document.getElementById('field_deliveryType').value,
+      executor: document.getElementById('field_executor').value,
+      subdivision: document.getElementById('field_subdivision').value,
+      outcomingDate: document.getElementById('field_outcomingDate').value,
+      selectedItemData: document.getElementById('field_correspondentDropdown').value,
+      incomingDate: document.getElementById('field_incomingDate').value
+      // ... и так далее для других полей
+    };
+
+    selectedItemRef.update(updatedData)
+      .then(() => {
+        console.log('Данные успешно обновлены');
+        modal.style.display = 'none'; // Закрываем модальное окно после сохранения
+      })
+      .catch(error => {
+        console.error('Ошибка при обновлении данных:', error);
+      });
+  });
+});
+
+
+
+
+// Закрываем модальное окно при нажатии на "крестик"
+const closeBtn = document.querySelector('.close');
+closeBtn.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+// Закрываем модальное окно при клике вне окна
+window.addEventListener('click', (event) => {
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+
+
+
+    const deleteButton = document.getElementById('deleteButton');
+
+
+    deleteButton.addEventListener('click', () => {
+  const confirmed = confirm('Вы уверены, что хотите удалить этот документ?');
+
+  if (confirmed) {
+    const keyToDelete = item.getAttribute('data-key');
+    const listItemToDelete = document.querySelector(`.list-item[data-key="${keyToDelete}"]`);
+    const databaseRef = firebase.database().ref('/realsoft/incomingDocuments');
+    // Удаление элемента по ключу
+  databaseRef.child(keyToDelete).remove()
+    .then(() => {
+      listItemToDelete.remove();
+      console.log('Элемент успешно удален');
+      objectInfoContainer.innerHTML = '' ;
+    })
+    .catch(error => {
+      console.error('Ошибка при удалении элемента:', error);
+    });
+  } else {
+    console.log('Удаление отменено');
+  }
+});
+
+
+// deleteButton.addEventListener('click', () => {
+//   const keyToDelete = item.getAttribute('data-key'); // Ваш ключ для удаления из базы данных
+//     const listItemToDelete = document.querySelector(`.list-item[data-key="${keyToDelete}"]`);
+
+
+//   // Ссылка на вашу базу данных Firebase
+//   const databaseRef = firebase.database().ref('/realsoft/incomingDocuments');
+
+//   // Удаление элемента по ключу
+//   databaseRef.child(keyToDelete).remove()
+//     .then(() => {
+//       listItemToDelete.remove();
+//       console.log('Элемент успешно удален');
+//       objectInfoContainer.innerHTML = '' ;
+//     })
+//     .catch(error => {
+//       console.error('Ошибка при удалении элемента:', error);
+//     });
+// });
+
+ 
+      })
+      .catch(error => {
+        console.error('Ошибка получения данных:', error);
+      });
+  });
+});
+
+
+
+
+
+    });
+  });
+
+
+
+
+}
+
+// Обработчик события для радиокнопок
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', event => {
+    currentFilter = event.target.value; // Обновляем текущий фильтр
+    displayData(currentFilter, searchInput.value.trim()); // Отображаем данные с учетом нового фильтра и поиска
+  });
+});
+
+// Обработчик события для поля поиска (input)
+const searchInput = document.getElementById('search');
+
+searchInput.addEventListener('input', () => {
+  displayData(currentFilter, searchInput.value.trim()); // Обновляем отображение данных при вводе поискового запроса
+});
+
+// Загрузка всех данных при начальной загрузке страницы
+displayData('all', ''); // Отображаем все данные без фильтрации при загрузке
+
+
+        try {
+          let app = firebase.app();
+          let features = [
+            'auth', 
+            'database', 
+            'firestore',
+            'functions',
+            'messaging', 
+            'storage', 
+            'analytics', 
+            'remoteConfig',
+            'performance',
+          ].filter(feature => typeof app[feature] === 'function');
+          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+          console.error(e);
+          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        }
+      });
+
+
+
+
+</script>
+
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+     <script src="js/script.js" defer></script>  
+    
+
+
+  </body>
+</html>
